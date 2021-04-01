@@ -1,0 +1,243 @@
+trace_analyzer: Warning: SetUsageMessage() never called
+
+  Flags from /build/gflags-6Vsjoz/gflags-2.2.1/src/gflags.cc:
+    -flagfile (load flags from file) type: string default: ""
+    -fromenv (set flags from the environment [use 'export FLAGS_flag1=value'])
+      type: string default: ""
+    -tryfromenv (set flags from the environment if present) type: string
+      default: ""
+    -undefok (comma-separated list of flag names that it is okay to specify on
+      the command line even if the program does not define a flag with that
+      name.  IMPORTANT: flags in this list that have arguments MUST use the
+      flag=value format) type: string default: ""
+
+  Flags from /build/gflags-6Vsjoz/gflags-2.2.1/src/gflags_completions.cc:
+    -tab_completion_columns (Number of columns to use in output for tab
+      completion) type: int32 default: 80
+    -tab_completion_word (If non-empty, HandleCommandLineCompletions() will
+      hijack the process and attempt to do bash-style command line flag
+      completion on this value.) type: string default: ""
+
+  Flags from /build/gflags-6Vsjoz/gflags-2.2.1/src/gflags_reporting.cc:
+    -help (show help on all flags [tip: all flags can have two dashes])
+      type: bool default: false currently: true
+    -helpfull (show help on all flags -- same as -help) type: bool
+      default: false
+    -helpmatch (show help on modules whose name contains the specified substr)
+      type: string default: ""
+    -helpon (show help on the modules named by this flag value) type: string
+      default: ""
+    -helppackage (show help on all modules in the main package) type: bool
+      default: false
+    -helpshort (show help on only the main module for this program) type: bool
+      default: false
+    -helpxml (produce an xml version of help) type: bool default: false
+    -version (show version and build info and exit) type: bool default: false
+
+
+
+  Flags from tools/block_cache_analyzer/block_cache_trace_analyzer.cc:
+    -access_count_buckets (Group number of blocks by their access count given
+      these buckets. If specified, the analyzer will output a detailed analysis
+      on the number of blocks grouped by their access count break down by block
+      type and column family.) type: string default: ""
+    -analyze_blocks_reuse_k_reuse_window (Analyze the percentage of blocks that
+      are accessed in the [k, 2*k] seconds are accessed again in the next [2*k,
+      3*k], [3*k, 4*k],...,[k*(n-1), k*n] seconds. ) type: int32 default: 0
+    -analyze_bottom_k_access_count_blocks (Print out detailed access
+      information for blocks with their number of accesses are the bottom k
+      among all blocks.) type: int32 default: 0
+    -analyze_callers (The list of callers to perform a detailed analysis on. If
+      speicfied, the analyzer will output a detailed percentage of accesses for
+      each caller break down by column family, level, and block type. A list of
+      available callers are: Get, MultiGet, Iterator, ApproximateSize,
+      VerifyChecksum, SSTDumpTool, ExternalSSTIngestion, Repair, Prefetch,
+      Compaction, CompactionRefill, Flush, SSTFileReader, Uncategorized.)
+      type: string default: ""
+    -analyze_correlation_coefficients_labels (Analyze the correlation
+      coefficients of features such as number of past accesses with regard to
+      the number of accesses till the next access.) type: string default: ""
+    -analyze_correlation_coefficients_max_number_of_values (The maximum number
+      of values for a feature. If the number of values for a feature is larger
+      than this max, it randomly selects 'max' number of values.) type: int32
+      default: 1000000
+    -analyze_get_spatial_locality_buckets (Group data blocks by their
+      statistics using these buckets.) type: string default: ""
+    -analyze_get_spatial_locality_labels (Group data blocks using these
+      labels.) type: string default: ""
+    -analyze_top_k_access_count_blocks (Print out detailed access information
+      for blocks with their number of accesses are the top k among all blocks.)
+      type: int32 default: 0
+    -block_cache_analysis_result_dir (The directory that saves block cache
+      analysis results.) type: string default: ""
+    -block_cache_sim_config_path (The config file path. One cache configuration
+      per line. The format of a cache configuration is
+      cache_name,num_shard_bits,ghost_capacity,cache_capacity_1,...,cache_capacity_N. Supported cache names are lru, lru_priority, lru_hybrid, and lru_hybrid_no_insert_on_row_miss. User may also add a prefix 'ghost_' to a cache_name to add a ghost cache in front of the real cache. ghost_capacity and cache_capacity can be xK, xM or xG where x is a positive number.)
+      type: string default: ""
+    -block_cache_trace_downsample_ratio (The trace collected accesses on one in
+      every block_cache_trace_downsample_ratio blocks. We scale down the
+      simulated cache size by this ratio.) type: int32 default: 1
+    -block_cache_trace_path (The trace file path.) type: string default: ""
+    -cache_sim_warmup_seconds (The number of seconds to warmup simulated
+      caches. The hit/miss counters are reset after the warmup completes.)
+      type: int32 default: 0
+    -human_readable_trace_file_path (The filt path that saves human readable
+      access records.) type: string default: ""
+    -is_block_cache_human_readable_trace (Is the trace file provided for
+      analysis generated by running block_cache_trace_analyzer with
+      FLAGS_human_readable_trace_file_path is specified.) type: bool
+      default: false
+    -mrc_only (Evaluate alternative cache policies only. When this flag is
+      true, the analyzer does NOT maintain states of each block in memory for
+      analysis. It only feeds the accesses into the cache simulators.)
+      type: bool default: false
+    -print_access_count_stats (Print access count distribution and the
+      distribution break down by block type and column family.) type: bool
+      default: false
+    -print_block_size_stats (Print block size distribution and the distribution
+      break down by block type and column family.) type: bool default: false
+    -print_data_block_access_count_stats (Print data block accesses by user Get
+      and Multi-Get.) type: bool default: false
+    -reuse_distance_buckets (Group blocks by their reuse distances given these
+      buckets. For example, if 'reuse_distance_buckets' is '1K,1M,1G', we will
+      create four buckets. The first three buckets contain the number of blocks
+      with reuse distance less than 1KB, between 1K and 1M, between 1M and 1G,
+      respectively. The last bucket contains the number of blocks with reuse
+      distance larger than 1G. ) type: string default: ""
+    -reuse_distance_labels (Group the reuse distance of a block using these
+      labels. Reuse distance is defined as the cumulated size of unique blocks
+      read between two consecutive accesses on the same block.) type: string
+      default: ""
+    -reuse_interval_buckets (Group blocks by their reuse interval given these
+      buckets. For example, if 'reuse_distance_buckets' is '1,10,100', we will
+      create four buckets. The first three buckets contain the number of blocks
+      with reuse interval less than 1 second, between 1 second and 10 seconds,
+      between 10 seconds and 100 seconds, respectively. The last bucket
+      contains the number of blocks with reuse interval longer than 100
+      seconds.) type: string default: ""
+    -reuse_interval_labels (Group the reuse interval of a block using these
+      labels. Reuse interval is defined as the time between two consecutive
+      accesses on the same block.) type: string default: ""
+    -reuse_lifetime_buckets (Group blocks by their reuse lifetime given these
+      buckets. For example, if 'reuse_lifetime_buckets' is '1,10,100', we will
+      create four buckets. The first three buckets contain the number of blocks
+      with reuse lifetime less than 1 second, between 1 second and 10 seconds,
+      between 10 seconds and 100 seconds, respectively. The last bucket
+      contains the number of blocks with reuse lifetime longer than 100
+      seconds.) type: string default: ""
+    -reuse_lifetime_labels (Group the reuse lifetime of a block using these
+      labels. Reuse lifetime is defined as the time interval between the first
+      access on a block and the last access on the same block. For blocks that
+      are only accessed once, its lifetime is set to kMaxUint64.) type: string
+      default: ""
+    -skew_buckets (Group the skew labels using these buckets.) type: string
+      default: ""
+    -skew_labels (Group the access count of a block using these labels.)
+      type: string default: ""
+    -timeline_labels (Group the number of accesses per block per second using
+      these labels. Possible labels are a combination of the following: cf
+      (column family), sst, level, bt (block type), caller, block. For example,
+      label "cf_bt" means the number of access per second is grouped by unique
+      pairs of "cf_bt". A label "all" contains the aggregated number of
+      accesses per second across all possible labels.) type: string default: ""
+
+
+
+  Flags from tools/trace_analyzer_tool.cc:
+    -analyze_delete (Analyze the Delete query.) type: bool default: false
+    -analyze_get (Analyze the Get query.) type: bool default: false
+    -analyze_iterator ( Analyze the iterate query like seek() and
+      seekForPrev().) type: bool default: false
+    -analyze_merge (Analyze the Merge query.) type: bool default: false
+    -analyze_put (Analyze the Put query.) type: bool default: false
+    -analyze_range_delete (Analyze the DeleteRange query.) type: bool
+      default: false
+    -analyze_single_delete (Analyze the SingleDelete query.) type: bool
+      default: false
+    -convert_to_human_readable_trace (Convert the binary trace file to a human
+      readable txt file for further processing. This file will be extremely
+      large (similar size as the original binary trace file). You can specify
+      'no_key' to reduce the size, if key is not needed in the next step.
+      File name: <prefix>_human_readable_trace.txt
+      Format:[type_id cf_id value_size time_in_micorsec <key>].) type: bool
+      default: false
+    -key_space_dir (<the directory stores full key space files> 
+      The key space files should be: <column family id>.txt) type: string
+      default: ""
+    -no_key ( Does not output the key to the result files to make smaller.)
+      type: bool default: false
+    -no_print (Do not print out any result) type: bool default: false
+    -output_access_count_stats (Output the access count distribution statistics
+      to file.
+      File name: 
+      <prefix>-<query_type>-<cf_id>-accessed_key_count_distribution.txt 
+      Format:[access_count number_of_access_count]) type: bool default: false
+    -output_dir (The directory to store the output files.) type: string
+      default: ""
+    -output_ignore_count (<threshold>, ignores the access count <= this value,
+      it will shorter the output.) type: int32 default: 0
+    -output_key_distribution (Print the key size distribution.) type: bool
+      default: false
+    -output_key_stats (Output the key access count statistics to file
+      for accessed keys:
+      file name: <prefix>-<query_type>-<cf_id>-accessed_key_stats.txt
+      Format:[cf_id value_size access_keyid access_count]
+      for the whole key space keys:
+      File name: <prefix>-<query_type>-<cf_id>-whole_key_stats.txt
+      Format:[whole_key_space_keyid access_count]) type: bool default: false
+    -output_prefix (The prefix used for all the output files.) type: string
+      default: "trace"
+    -output_prefix_cut (The number of bytes as prefix to cut the keys.
+      If it is enabled, it will generate the following:
+      For accessed keys:
+      File name: <prefix>-<query_type>-<cf_id>-accessed_key_prefix_cut.txt 
+      Format:[acessed_keyid access_count_of_prefix number_of_keys_in_prefix
+      average_key_access prefix_succ_ratio prefix]
+      For whole key space keys:
+      File name: <prefix>-<query_type>-<cf_id>-whole_key_prefix_cut.txt
+      Format:[start_keyid_in_whole_keyspace prefix]
+      if 'output_qps_stats' and 'top_k' are enabled, it will output:
+      File name:
+      <prefix>-<query_type>-<cf_id>-accessed_top_k_qps_prefix_cut.txt
+      Format:[the_top_ith_qps_time QPS], [prefix qps_of_this_second].)
+      type: int32 default: 0
+    -output_qps_stats (Output the query per second(qps) statistics 
+      For the overall qps, it will contain all qps of each query type. The time
+      is started from the first trace record
+      File name: <prefix>_qps_stats.txt
+      Format: [qps_type_1 qps_type_2 ...... overall_qps]
+      For each cf and query, it will have its own qps output.
+      File name: <prefix>-<query_type>-<cf_id>_qps_stats.txt 
+      Format:[query_count_in_this_second].) type: bool default: false
+    -output_time_series (Output the access time in second of each key, such
+      that we can have the time series data of the queries 
+      File name: <prefix>-<query_type>-<cf_id>-time_series.txt
+      Format:[type_id time_in_sec access_keyid].) type: bool default: false
+    -output_value_distribution (Out put the value size distribution, only
+      available for Put and Merge.
+      File name:
+      <prefix>-<query_type>-<cf_id>-accessed_value_size_distribution.txt
+      Format:[Number_of_value_size_between x and x+value_interval is: <the
+      count>]) type: bool default: false
+    -print_correlation (intput format: [correlation pairs][.,.]
+      Output the query correlations between the pairs of query types listed in
+      the parameter, input should select the operations from:
+      get, put, delete, single_delete, rangle_delete, merge. No space between
+      the pairs separated by commar. Example: =[get,get]... It will print out
+      the number of pairs of 'A after B' and the average time interval between
+      the two query.) type: string default: ""
+    -print_overall_stats ( Print the stats of the whole trace, like total
+      requests, keys, and etc.) type: bool default: true
+    -print_top_k_access (<top K of the variables to be printed> Print the top k
+      accessed keys, top k accessed prefix and etc.) type: int32 default: 1
+    -sample_ratio (If the trace size is extremely huge or user want to sample
+      the trace when analyzing, sample ratio can be set (0, 1.0]) type: double
+      default: 1
+    -trace_path (The trace file path.) type: string default: ""
+    -try_process_corrupted_trace (In default, trace_analyzer will exit if the
+      trace file is corrupted due to the unexpected tracing cases. If this
+      option is enabled, trace_analyzer will stop reading the trace file, and
+      start analyzing the read-in data.) type: bool default: false
+    -value_interval (To output the value distribution, we need to set the value
+      intervals and make the statistic of the value size distribution in
+      different intervals. The default is 8.) type: int32 default: 8

@@ -5710,7 +5710,7 @@ class Benchmark {
     
     std::ofstream query_trace_file;
     std::string trace_path = FLAGS_trace_file + "-human_readable_trace.txt";
-    query_trace_file.open(FLAGS_trace_file);
+    query_trace_file.open(trace_path);
 
     if (value_max > FLAGS_mix_max_value_size) {
       value_max = FLAGS_mix_max_value_size;
