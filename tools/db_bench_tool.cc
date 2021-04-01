@@ -5709,8 +5709,7 @@ class Benchmark {
     Status s;
     
     std::ofstream query_trace_file;
-    std::string log_path = std::string("/users/yangzhou/farMemory2/exp/hashtable/aipfm/ZippyDB_query.trace");
-    query_trace_file.open(log_path);
+    query_trace_file.open(FLAGS_trace_file);
 
     if (value_max > FLAGS_mix_max_value_size) {
       value_max = FLAGS_mix_max_value_size;
