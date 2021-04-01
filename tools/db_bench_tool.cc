@@ -31,6 +31,7 @@
 #include <mutex>
 #include <thread>
 #include <unordered_map>
+#include <fstream>
 
 #include "db/db_impl/db_impl.h"
 #include "db/malloc_stats.h"
@@ -5690,11 +5691,11 @@ class Benchmark {
     int64_t puts = 0;
     int64_t found = 0;
     int64_t seek = 0;
-    int64_t seek_found = 0;
+    // int64_t seek_found = 0;
     int64_t bytes = 0;
     const int64_t default_value_max = 1 * 1024 * 1024;
     int64_t value_max = default_value_max;
-    int64_t scan_len_max = FLAGS_mix_max_scan_len;
+    // int64_t scan_len_max = FLAGS_mix_max_scan_len;
     double write_rate = 1000000.0;
     double read_rate = 1000000.0;
     bool use_prefix_modeling = false;
@@ -5702,10 +5703,15 @@ class Benchmark {
     GenerateTwoTermExpKeys gen_exp;
     std::vector<double> ratio{FLAGS_mix_get_ratio, FLAGS_mix_put_ratio,
                               FLAGS_mix_seek_ratio};
-    char value_buffer[default_value_max];
+    // char value_buffer[default_value_max];
     QueryDecider query;
     RandomGenerator gen;
     Status s;
+    
+    std::ofstream query_trace_file;
+    std::string log_path = std::string("/users/yangzhou/farMemory2/exp/hashtable/aipfm/ZippyDB_query.trace");
+    query_trace_file.open(log_path);
+
     if (value_max > FLAGS_mix_max_value_size) {
       value_max = FLAGS_mix_max_value_size;
     }
@@ -5789,25 +5795,26 @@ class Benchmark {
       // Start the query
       if (query_type == 0) {
         // the Get query
-        gets++;
-        read++;
-        if (FLAGS_num_column_families > 1) {
-          s = db_with_cfh->db->Get(options, db_with_cfh->GetCfh(key_rand), key,
-                                   &pinnable_val);
-        } else {
-          pinnable_val.Reset();
-          s = db_with_cfh->db->Get(options,
-                                   db_with_cfh->db->DefaultColumnFamily(), key,
-                                   &pinnable_val);
-        }
+        query_trace_file << "0 " << key.ToString(true) << std::endl;
+        // gets++;
+        // read++;
+        // if (FLAGS_num_column_families > 1) {
+        //   s = db_with_cfh->db->Get(options, db_with_cfh->GetCfh(key_rand), key,
+        //                            &pinnable_val);
+        // } else {
+        //   pinnable_val.Reset();
+        //   s = db_with_cfh->db->Get(options,
+        //                            db_with_cfh->db->DefaultColumnFamily(), key,
+        //                            &pinnable_val);
+        // }
 
-        if (s.ok()) {
-          found++;
-          bytes += key.size() + pinnable_val.size();
-        } else if (!s.IsNotFound()) {
-          fprintf(stderr, "Get returned an error: %s\n", s.ToString().c_str());
-          abort();
-        }
+        // if (s.ok()) {
+        //   found++;
+        //   bytes += key.size() + pinnable_val.size();
+        // } else if (!s.IsNotFound()) {
+        //   fprintf(stderr, "Get returned an error: %s\n", s.ToString().c_str());
+        //   abort();
+        // }
 
         if (thread->shared->read_rate_limiter.get() != nullptr &&
             read % 256 == 255) {
@@ -5826,14 +5833,15 @@ class Benchmark {
         } else if (val_size > value_max) {
           val_size = val_size % value_max;
         }
-        s = db_with_cfh->db->Put(
-            write_options_, key,
-            gen.Generate(static_cast<unsigned int>(val_size)));
-        if (!s.ok()) {
-          fprintf(stderr, "put error: %s\n", s.ToString().c_str());
-          ErrorExit();
-        }
-
+        query_trace_file << "1 " << key.ToString(true) << " " << val_size << std::endl;
+        // s = db_with_cfh->db->Put(
+        //     write_options_, key,
+        //     gen.Generate(static_cast<unsigned int>(val_size)));
+        // if (!s.ok()) {
+        //   fprintf(stderr, "put error: %s\n", s.ToString().c_str());
+        //   ErrorExit();
+        // }
+        
         if (thread->shared->write_rate_limiter) {
           thread->shared->write_rate_limiter->Request(
               key.size() + val_size, Env::IO_HIGH, nullptr /*stats*/,
@@ -5842,34 +5850,36 @@ class Benchmark {
         thread->stats.FinishedOps(db_with_cfh, db_with_cfh->db, 1, kWrite);
       } else if (query_type == 2) {
         // Seek query
-        if (db_with_cfh->db != nullptr) {
-          Iterator* single_iter = nullptr;
-          single_iter = db_with_cfh->db->NewIterator(options);
-          if (single_iter != nullptr) {
-            single_iter->Seek(key);
-            seek++;
-            read++;
-            if (single_iter->Valid() && single_iter->key().compare(key) == 0) {
-              seek_found++;
-            }
-            int64_t scan_length =
-                ParetoCdfInversion(u, FLAGS_iter_theta, FLAGS_iter_k,
-                                   FLAGS_iter_sigma) %
-                scan_len_max;
-            for (int64_t j = 0; j < scan_length && single_iter->Valid(); j++) {
-              Slice value = single_iter->value();
-              memcpy(value_buffer, value.data(),
-                     std::min(value.size(), sizeof(value_buffer)));
-              bytes += single_iter->key().size() + single_iter->value().size();
-              single_iter->Next();
-              assert(single_iter->status().ok());
-            }
-          }
-          delete single_iter;
-        }
+        query_trace_file << "2 " << key.ToString(true) << std::endl;
+        // if (db_with_cfh->db != nullptr) {
+        //   Iterator* single_iter = nullptr;
+        //   single_iter = db_with_cfh->db->NewIterator(options);
+        //   if (single_iter != nullptr) {
+        //     single_iter->Seek(key);
+        //     seek++;
+        //     read++;
+        //     if (single_iter->Valid() && single_iter->key().compare(key) == 0) {
+        //       seek_found++;
+        //     }
+        //     int64_t scan_length =
+        //         ParetoCdfInversion(u, FLAGS_iter_theta, FLAGS_iter_k,
+        //                            FLAGS_iter_sigma) %
+        //         scan_len_max;
+        //     for (int64_t j = 0; j < scan_length && single_iter->Valid(); j++) {
+        //       Slice value = single_iter->value();
+        //       memcpy(value_buffer, value.data(),
+        //              std::min(value.size(), sizeof(value_buffer)));
+        //       bytes += single_iter->key().size() + single_iter->value().size();
+        //       single_iter->Next();
+        //       assert(single_iter->status().ok());
+        //     }
+        //   }
+        //   delete single_iter;
+        // }
         thread->stats.FinishedOps(db_with_cfh, db_with_cfh->db, 1, kSeek);
       }
     }
+    query_trace_file.close();
     char msg[256];
     snprintf(msg, sizeof(msg),
              "( Gets:%" PRIu64 " Puts:%" PRIu64 " Seek:%" PRIu64 " of %" PRIu64
